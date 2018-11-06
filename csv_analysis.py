@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Testing CSV opening/classifying
 # By Noah Kruiper
 # For CEG4136 Fall 2018
