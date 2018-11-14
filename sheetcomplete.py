@@ -11,6 +11,7 @@
 # ------------------------------------------------------------------------------
 
 from sklearn.neighbors import KNeighborsRegressor
+from sklearn.model_selection import train_test_split
 import csv
 import sys
 import pandas
@@ -83,16 +84,22 @@ def get_data_types():
 
 
 # Step 3: sort and classify data sets
-# TODO: method prototype & description
-
 # Step 4: train networks
-def train_algos():
+def train_algos(dataframe):
     """
     This function is the heart of SheetComplete. TODO: complete documentation
     """
+    # Remove rows with missing data
+    notnans = dataframe.notnull().all(axis=1)
+    df_notnans = dataframe[notnans]
+
+    # Split into 75% train and 25% test
+    X_train, X_test, y_train, y_test = train_test_split(df_notnans,
+                                                        train_size=0.75,
+                                                        random_state=4)
 
     # Set up parameters of each classifier 
-    # TODO: move hardcoded parameters into 
+    # TODO: move hardcoded parameters into Step -1
 
     regressors = [
         KNeighborsRegressor(n_neighbors=5)
@@ -101,7 +108,7 @@ def train_algos():
 
     for algo in regressors:
         # fit the training data to the regressors
-        algo.fit(X_train, Y_train) # TODO: fix variable names once step 3 done
+        algo.fit(X_train, y_train)
 
 # Step 5: assess networks
 def assess_networks():
