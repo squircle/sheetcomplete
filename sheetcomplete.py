@@ -10,7 +10,7 @@
 #   Imports
 # ------------------------------------------------------------------------------
 
-
+from sklearn.neighbors import KNeighborsRegressor
 
 # ------------------------------------------------------------------------------
 #   Functions
@@ -55,8 +55,20 @@ def get_data_types():
 # Step 4: train networks
 def train_algos():
     """
-    This function is the heart of SheetComplete. 
+    This function is the heart of SheetComplete. TODO: complete documentation
     """
+
+    # Set up parameters of each classifier 
+    # TODO: move hardcoded parameters into 
+
+    regressors = [
+        KNeighborsRegressor(n_neighbors=5)
+        # TODO: use a wide variety of generated K values.
+        ]
+
+    for algo in regressors:
+        # fit the training data to the regressors
+        algo.fit(X_train, Y_train) # TODO: fix variable names once step 3 done
 
 # Step 5: assess networks
 # TODO: method prototype & description
