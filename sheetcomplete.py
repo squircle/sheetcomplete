@@ -16,6 +16,8 @@ __status__      = "Development"
 # ------------------------------------------------------------------------------
 
 from sklearn.neighbors import KNeighborsRegressor
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.model_selection import train_test_split
 import csv
 import sys
@@ -37,6 +39,9 @@ filename = sys.argv[1]
 # indicates if the original format of the csv was column-oriented
 columnOriented = True
 
+# random state for regressors
+# TODO: implement random chooser for this state and a corresponding flag
+rand_state = 4 # chosen by dice roll, guaranteed to be random
 
 # Step 0: get the data out
 # Step 1: determine directionality
@@ -107,8 +112,11 @@ def train_algos(dataframe):
     # TODO: move hardcoded parameters into Step -1
 
     regressors = [
-        KNeighborsRegressor(n_neighbors=5)
+        KNeighborsRegressor(n_neighbors=5),
         # TODO: use a wide variety of generated K values.
+        DecisionTreeRegressor(random_state=rand_state),
+        ExtraTreesRegressor(n_estimators=100, random_state=rand_state)
+        # TODO: determine if n_estimators needs to be varied, and implement
         ]
 
     for algo in regressors:
