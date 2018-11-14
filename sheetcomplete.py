@@ -36,7 +36,7 @@ columnOriented = True
 def parse_csv():
     """
     Parse the given CSV file to extract data in a usable format. At a high
-    level, this involves X steps:
+    level, this involves the following steps:
 
     1. Determine directionality
     2. If directionality does not conform to column-wise grouping, transpose the data
@@ -92,14 +92,23 @@ def train_algos():
 
 
 # Step 5: assess networks
-# TODO: method prototype & description
+def assess_networks():
+    """
+        For each column with missing data, determine which network produces the best predictions.
+    """
+    # TODO: complete method
 
 # ------------------------------------------------------------------------------
 #   Main function
 # ------------------------------------------------------------------------------
 
+# STEP 1: Parse input CSV to dataframe
 # for debugging
 # print(parse_csv().to_string())
+
+# STEP 2: possibly unnecessary
+
+# STEP 3:
 
 if __name__ == '__main__':
     exit(0)
