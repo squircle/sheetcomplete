@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+__author__      = "Noah Kruiper and Tyson Moore"
+__license__     = "TBD"
+__version__     = "0"
+__email__       = "nkrui088@uottawa.ca, tmoor092@uottawa.ca"
+__status__      = "Development"
 
 # SheetComplete main program 
 # by Noah Kruiper and Tyson Moore
 # for Miodrag Bolic, CEG 4913 Fall 2018
-# University of Ottawa, 2018.
-# FIXME: turn this into proper pydoc format
 
 # ------------------------------------------------------------------------------
 #   Imports
