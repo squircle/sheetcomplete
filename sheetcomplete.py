@@ -19,6 +19,7 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPRegressor
 import csv
 import sys
 import pandas
@@ -115,8 +116,11 @@ def train_algos(dataframe):
         KNeighborsRegressor(n_neighbors=5),
         # TODO: use a wide variety of generated K values.
         DecisionTreeRegressor(random_state=rand_state),
-        ExtraTreesRegressor(n_estimators=100, random_state=rand_state)
+        ExtraTreesRegressor(n_estimators=100, random_state=rand_state),
         # TODO: determine if n_estimators needs to be varied, and implement
+        MLPRegressor(hidden_layer_sizes=100, random_state=rand_state)
+        # TODO: flesh out options -- this neural net will need a lot of them,
+        #       maybe even a loop over multiple layer sizes, learning rates, etc.
         ]
 
     for algo in regressors:
