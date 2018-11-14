@@ -91,7 +91,6 @@ def train_algos():
     This function is the heart of SheetComplete. TODO: complete documentation
     """
 
-<<<<<<< HEAD
     # Set up parameters of each classifier 
     # TODO: move hardcoded parameters into 
 
@@ -103,8 +102,6 @@ def train_algos():
     for algo in regressors:
         # fit the training data to the regressors
         algo.fit(X_train, Y_train) # TODO: fix variable names once step 3 done
-=======
->>>>>>> f77cb69b3fa6f50053f4a6dd290ff32393ca7867
 
 # Step 5: assess networks
 def assess_networks():
