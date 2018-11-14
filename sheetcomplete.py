@@ -90,30 +90,12 @@ def get_data_types():
 
 # Step 3: sort and classify data sets
 # Step 4: train networks
-def train_algos(dataframe):
+def evaluate_algo(xTrain, yTrain, xTest, yTest, regressor):
     """
     This function is the heart of SheetComplete. TODO: complete documentation
     """
-    # Remove rows with missing data
-    notnans = dataframe.notnull().all(axis=1)
-    df_notnans = dataframe[notnans]
-
-    # Split into 75% train and 25% test
-    X_train, X_test, y_train, y_test = train_test_split(df_notnans,
-                                                        train_size=0.75,
-                                                        random_state=4)
-
-    # Set up parameters of each classifier 
-    # TODO: move hardcoded parameters into Step -1
-
-    regressors = [
-        KNeighborsRegressor(n_neighbors=5)
-        # TODO: use a wide variety of generated K values.
-        ]
-
-    for algo in regressors:
-        # fit the training data to the regressors
-        algo.fit(X_train, y_train)
+    # fit the training data to the regressors
+    algo.fit(X_train, y_train)
 
 # Step 5: assess networks
 def assess_networks():
@@ -128,11 +110,37 @@ def assess_networks():
 
 # STEP 1: Parse input CSV to dataframe
 # for debugging
-# print(parse_csv().to_string())
+dataframe = parse_csv()
+# print(dataframe.to_string())
 
 # STEP 2: possibly unnecessary
 
 # STEP 3:
+
+# Split rows with missing data
+notnans = dataframe.notnull().all(axis=1)
+df_notnans = dataframe[notnans] # Not null values
+df_nans = dataframe.loc[~notnans].copy() # Rows with null values
+
+# determine which columns have missing data
+
+# Split into 80% train and 20% test
+
+
+
+# Set up parameters of each classifier
+    # TODO: move hardcoded parameters into Step -1
+
+    regressors = [
+        KNeighborsRegressor(n_neighbors=5)
+        # TODO: use a wide variety of generated K values.
+        ]
+
+    for column in dataframe
+        for algo in regressors:
+            evaluate_algo()
+
+
 
 if __name__ == '__main__':
     exit(0)
