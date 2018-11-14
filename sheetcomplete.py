@@ -126,13 +126,12 @@ def assess_networks():
 #   Main function
 # ------------------------------------------------------------------------------
 
-# STEP 1: Parse input CSV to dataframe
-# for debugging
-# print(parse_csv().to_string())
-
-# STEP 2: possibly unnecessary
-
-# STEP 3:
-
 if __name__ == '__main__':
+    # STEP 1: Parse input CSV to dataframe
+    # for debugging
+    # print(parse_csv().to_string())
+
+    # STEP 2: possibly unnecessary
+
+    # STEP 3:
     exit(0)
