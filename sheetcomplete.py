@@ -20,6 +20,7 @@ from sklearn.model_selection import train_test_split
 import csv
 import sys
 import pandas
+import numpy
 
 # ------------------------------------------------------------------------------
 #   Functions
@@ -95,7 +96,7 @@ def evaluate_algo(xTrain, yTrain, xTest, yTest, regressor):
     This function is the heart of SheetComplete. TODO: complete documentation
     """
     # fit the training data to the regressors
-    algo.fit(X_train, y_train)
+    #algo.fit(X_train, y_train)
 
 # Step 5: assess networks
 def assess_networks():
@@ -108,8 +109,10 @@ def assess_networks():
 #   Main function
 # ------------------------------------------------------------------------------
 
+# treat inf and empty string as NA
+pandas.options.mode.use_inf_as_na = True
+
 # STEP 1: Parse input CSV to dataframe
-# for debugging
 dataframe = parse_csv()
 # print(dataframe.to_string())
 
@@ -117,29 +120,41 @@ dataframe = parse_csv()
 
 # STEP 3:
 
-# Split rows with missing data
-notnans = dataframe.notnull().all(axis=1)
-df_notnans = dataframe[notnans] # Not null values
-df_nans = dataframe.loc[~notnans].copy() # Rows with null values
+# Store rows which have NO NULLs
+df_noNull = dataframe.dropna()
+# Store rows which have NULLs
+df_onlyNull = dataframe[~dataframe.index.isin(df_noNull.index)]
+# Indicate which columns have NULLs
+df_containNull = df_onlyNull.isna().any()
 
-# determine which columns have missing data
-
-# Split into 80% train and 20% test
-
+# NOTE: index SHOULD be preserved with df_onlyNull, meaning it should be possible to iterate through at the end and...
+# NOTE: ...fill in missing data by iterating through those indexes, recreating the original order and shape of the data.
 
 
 # Set up parameters of each classifier
-    # TODO: move hardcoded parameters into Step -1
+# TODO: move hardcoded parameters into Step -1
 
-    regressors = [
-        KNeighborsRegressor(n_neighbors=5)
-        # TODO: use a wide variety of generated K values.
-        ]
+regressors = [
+    KNeighborsRegressor(n_neighbors=5)
+    # TODO: use a wide variety of generated K values.
+    ]
 
-    for column in dataframe
-        for algo in regressors:
-            evaluate_algo()
+# TODO: generate random number, save and use in the loop with train_test_split as random_state to preserve split order
 
+# Iterate through all columns
+for column in range(0, df_containNull.size -1):
+    # If the column has missing data...
+    if df_containNull[column]:
+        # Copy dataframe without the column in question
+        df_noColumn = df_noNull.copy(deep=True).drop(df_noNull.columns[[column]], axis=1, inplace=True)
+        # Copy ONLY the column
+        df_column = df_noNull[[column]].copy()
+        # Split into train and test sets
+        X_train, X_test, y_train, y_test = train_test_split(df_noNull(df_noColumn, df_column, test_size=0.25, random_state=42))
+        # Evaluate each algorithm
+        for algorithm in regressors:
+            evaluate_algo(X_train, y_train, X_test, y_test, algorithm)
+            # Select the algorithm and save it into an array or something
 
 
 if __name__ == '__main__':
