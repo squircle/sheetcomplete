@@ -17,6 +17,7 @@ __status__      = "Development"
 
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.model_selection import train_test_split
+import sklearn.utils
 import csv
 import sys
 import pandas
@@ -86,7 +87,9 @@ def get_data_types():
     """
 
     # TODO: method completion
-    # NOTE: this can wait till the end -- it's more of an extra check
+
+
+
 
 
 # Step 3: sort and classify data sets
@@ -116,16 +119,19 @@ pandas.options.mode.use_inf_as_na = True
 dataframe = parse_csv()
 # print(dataframe.to_string())
 
-# STEP 2: possibly unnecessary
-
+# STEP 2:
+datatypes = sklearn.utils.check_array(dataframe)
+print(datatypes)
 # STEP 3:
 
 # Store rows which have NO NULLs
-df_noNull = dataframe.dropna()
+#df_noNull = dataframe.dropna()
+
 # Store rows which have NULLs
-df_onlyNull = dataframe[~dataframe.index.isin(df_noNull.index)]
+#df_onlyNull = dataframe[~dataframe.index.isin(df_noNull.index)]
+
 # Indicate which columns have NULLs
-df_containNull = df_onlyNull.isna().any()
+#df_containNull = df_onlyNull.isna().any()
 
 # NOTE: index SHOULD be preserved with df_onlyNull, meaning it should be possible to iterate through at the end and...
 # NOTE: ...fill in missing data by iterating through those indexes, recreating the original order and shape of the data.
@@ -134,27 +140,25 @@ df_containNull = df_onlyNull.isna().any()
 # Set up parameters of each classifier
 # TODO: move hardcoded parameters into Step -1
 
-regressors = [
-    KNeighborsRegressor(n_neighbors=5)
-    # TODO: use a wide variety of generated K values.
-    ]
-
-# TODO: generate random number, save and use in the loop with train_test_split as random_state to preserve split order
+# regressors = [
+#     KNeighborsRegressor(n_neighbors=5)
+#     # TODO: use a wide variety of generated K values.
+#     ]
 
 # Iterate through all columns
-for column in range(0, df_containNull.size -1):
-    # If the column has missing data...
-    if df_containNull[column]:
-        # Copy dataframe without the column in question
-        df_noColumn = df_noNull.copy(deep=True).drop(df_noNull.columns[[column]], axis=1, inplace=True)
-        # Copy ONLY the column
-        df_column = df_noNull[[column]].copy()
-        # Split into train and test sets
-        X_train, X_test, y_train, y_test = train_test_split(df_noNull(df_noColumn, df_column, test_size=0.25, random_state=42))
-        # Evaluate each algorithm
-        for algorithm in regressors:
-            evaluate_algo(X_train, y_train, X_test, y_test, algorithm)
-            # Select the algorithm and save it into an array or something
+# for column in range(0, df_containNull.size -1):
+#     # If the column has missing data...
+#     if df_containNull[column]:
+#         # Copy dataframe without the column in question
+#         df_noColumn = df_noNull.copy(deep=True).drop(df_noNull.columns[[column]], axis=1, inplace=True)
+#         # Copy ONLY the column
+#         df_column = df_noNull[[column]].copy()
+#         # Split into train and test sets
+#         X_train, X_test, y_train, y_test = train_test_split(df_noNull(df_noColumn, df_column, test_size=0.25, random_state=42))
+#         # Evaluate each algorithm
+#         for algorithm in regressors:
+#             evaluate_algo(X_train, y_train, X_test, y_test, algorithm)
+#         # Select the best algorithm and save it into an array or something
 
 
 if __name__ == '__main__':
