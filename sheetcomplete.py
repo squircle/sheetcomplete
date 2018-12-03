@@ -25,6 +25,15 @@ import csv
 import sys
 import pandas
 import numpy
+import copy
+
+# ------------------------------------------------------------------------------
+#   Definitions
+# ------------------------------------------------------------------------------
+
+# random state for regressors
+# TODO: implement random chooser for this state and a corresponding flag
+rand_state = 4 # chosen by fair dice roll, guaranteed to be random
 
 # ------------------------------------------------------------------------------
 #   Functions
@@ -41,10 +50,6 @@ import numpy
 filename = sys.argv[1]
 # indicates if the original format of the csv was column-oriented
 columnOriented = True
-
-# random state for regressors
-# TODO: implement random chooser for this state and a corresponding flag
-rand_state = 4 # chosen by dice roll, guaranteed to be random
 
 # Step 0: get the data out
 # Step 1: determine directionality
@@ -94,28 +99,86 @@ def get_data_types():
 
     # TODO: method completion
 
-
-
-
-
 # Step 3: sort and classify data sets
 # Step 4: train networks
-def evaluate_algo(xTrain, yTrain, xTest, yTest, regressor):
+def run_algos(x, y):
     """
     This function is the heart of SheetComplete. TODO: complete documentation
     """
-    # Remove rows with missing data
-    notnans = dataframe.notnull().all(axis=1)
-    df_notnans = dataframe[notnans]
+    # perform a data split
+    X_train, X_test, Y_train, Y_test = train_test_split(x, y, test_size=0.33, random_state=rand_state)
 
-    # Split into 75% train and 25% test
-    X_train, X_test, y_train, y_test = train_test_split(df_notnans,
-                                                        train_size=0.75,
-                                                        random_state=4)
+    # do some preliminary data processing
+    X_train_num = X_train.apply(pandas.to_numeric, errors='coerce')
+    Y_train_num = Y_train.apply(pandas.to_numeric, errors='coerce')
+    X_test_num = X_train.apply(pandas.to_numeric, errors='coerce')
+    Y_test_num = Y_train.apply(pandas.to_numeric, errors='coerce')
+    # TODO: Note that these are filling in NaNs with 0, since there are problems converting String to float.
+    # This might be related to the @ symbols in the emails, not sure
+    X_train_num.fillna(0, inplace=True)
+    Y_train_num.fillna(0, inplace=True)
+    X_test_num.fillna(0, inplace=True)
+    Y_test_num.fillna(0, inplace=True)
 
-    # Set up parameters of each classifier 
-    # TODO: move hardcoded parameters into Step -1
+    # create a list of dictionaries
+    # each dictionary contains the regressor itself and its input parameters
+    regressors_list = list()
 
+    for algo in regressor_factory():
+        regressors_list.append({
+            "regressor": algo,
+            "X_train": X_train_num,
+            "X_test": X_test_num,
+            "Y_train": Y_train_num,
+            "Y_test": Y_test_num
+        })
+
+    print('\nTrain Data X:\n' + X_train.to_string())
+    print('\nTest Data X:\n' + X_test.to_string())
+    print('\nTrain Data Y:\n' + Y_train.to_string())
+    print('\nTest Data Y:\n' + Y_test.to_string())
+
+    # run the regressors against the input data
+    for algo in regressors_list:
+        algo["regressor"].fit(X_train_num, Y_train_num)
+
+    return regressors_list
+
+# Step 5: evaluate algorithms
+def evaluate_algos(reg_list):
+    """
+    For each column with missing data, determine which network produces the best predictions.
+    Return a reference to the best-performing algorithm, and print a report to stdout.
+
+    This currently uses the simple R^2 score, which is the default .score method of each regressor.
+    In the future, it could be expanded to use the cross-validation score.
+    """
+
+    # score all the algorithms
+    for algo in reg_list:
+        algo["score"] = algo["regressor"].score(algo["X_test"], algo["Y_test"])
+
+    # choose the best one and return it
+    best_algo = None
+    print("\nScore report:\n=============\n\n")
+
+    for algo in reg_list:
+        print("{}: {}".format(type(algo["regressor"]), algo["score"]))
+        if best_algo == None:
+            best_algo = algo
+        elif algo["score"] > best_algo["score"]:
+            best_algo = algo
+
+    print("\nBest regressor: {}".format(type(best_algo["regressor"])))
+    return best_algo
+
+def regressor_factory():
+    """
+    Create a list of regressors that can be used with a data set. This is a 'deep copy' operation
+    because it duplicates the objects, rather than simply creating references to the old ones
+    (doing so would result in training the same regressors over and over again).
+    """
+    # list of regressors to use in evaluation
     regressors = [
         KNeighborsRegressor(n_neighbors=5),
         # TODO: use a wide variety of generated K values.
@@ -126,17 +189,18 @@ def evaluate_algo(xTrain, yTrain, xTest, yTest, regressor):
         # TODO: flesh out options -- this neural net will need a lot of them,
         #       maybe even a loop over multiple layer sizes, learning rates, etc.
         ]
+    
+    return copy.deepcopy(regressors)
 
-    for algo in regressors:
-        # fit the training data to the regressors
-        algo.fit(X_train, y_train)
+# Step 6: fill in missing data
+def fill_missing(X, regressor):
+    """
+    Fills in the missing data using the chosen regressor. X is the input, and will output Y,
+    given the specified regressor.
+    """
+    Y = regressor.predict(X) # FIXME: does this need to unpack the data frame somehow?
 
-# Step 5: assess networks
-def assess_networks():
-    """
-        For each column with missing data, determine which network produces the best predictions.
-    """
-    # TODO: complete method
+    return Y # FIXME: does this need to be of some dataframe type?
 
 # ------------------------------------------------------------------------------
 #   Main function
@@ -155,8 +219,6 @@ if __name__ == '__main__':
     datatypes = dataframe.dtypes # where object, treat as string
     print('\nDatatypes:\n' + datatypes.to_string())
 
-        # STEP 2: possibly unnecessary
-
     # Store rows which have NO NULLs
     df_noNull = dataframe.dropna()
     print('\nRows with NO NULL cells:\n' + df_noNull.to_string())
@@ -172,16 +234,6 @@ if __name__ == '__main__':
     # NOTE: index SHOULD be preserved with df_onlyNull, meaning it should be possible to iterate through at the end and...
     # NOTE: ...fill in missing data by iterating through those indexes, recreating the original order and shape of the data.
 
-
-
-    # Set up parameters of each classifier
-    # TODO: move hardcoded parameters into Step -1
-
-    # regressors = [
-    #     KNeighborsRegressor(n_neighbors=5)
-    #     # TODO: use a wide variety of generated K values.
-    #     ]
-
     # Iterate through all columns
     for i in range(len(df_containNull)):
         # if the column has missing data
@@ -192,24 +244,13 @@ if __name__ == '__main__':
             print('\nTarget Column Y:\n' + y.to_string())
             x = df_noNull.drop(df_noNull.iloc[:, i].name, axis=1).copy()
             print('\nInput Data X:\n' + x.to_string())
-            # perform a data split
-            X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=42)
-            print('\nTrain Data X:\n' + X_train.to_string())
-            print('\nTest Data X:\n' + X_test.to_string())
-            print('\nTrain Data Y:\n' + y_train.to_string())
-            print('\nTest Data Y:\n' + y_test.to_string())
-            # TODO: ITERATE THROUGH VARIOUS REGRESSORS
-            regressor = sklearn.neural_network.MLPRegressor()
-            # Todo: is it possible to avoid converting to numeric?
-            X_train_num = X_train.apply(pandas.to_numeric, errors='coerce')
-            y_train_num = y_train.apply(pandas.to_numeric, errors='coerce')
-            # TODO: Note that these are filling in NaNs with 0, since there are problems converting String to float.
-            # This might be related to the @ symbols in the emails, not sure
-            X_train_num.fillna(0, inplace=True)
-            y_train_num.fillna(0, inplace=True)
-            regressor.fit(X_train_num, y_train_num)
+            
+            # run all the regressors
+            reg_list = run_algos(x, y)
 
-    #         # Evaluate each algorithm
-    #         for algorithm in regressors:
-    #             evaluate_algo(X_train, y_train, X_test, y_test, algorithm)
-    #         # Select the best algorithm and save it into an array or something
+            # evaluate which is best
+            best_algo = evaluate_algos(reg_list)
+
+            # fill missing data with predictions
+            # FIXME: do data frame maniupulations to call fill_missing and put the data back
+            # fill_missing(???, best_algo["regressor"])
