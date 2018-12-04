@@ -16,11 +16,12 @@ __status__ = "Development"
 #   Imports
 # ------------------------------------------------------------------------------
 
-from sklearn.neighbors import KNeighborsRegressor
+from sklearn.neighbors import KNeighborsRegressor, RadiusNeighborsRegressor
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.ensemble import ExtraTreesRegressor
+from sklearn.ensemble import ExtraTreesRegressor, RandomForestRegressor, GradientBoostingRegressor, AdaBoostRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPRegressor
+from sklearn.gaussian_process import GaussianProcessRegressor
 import csv
 import sys
 import pandas
@@ -32,8 +33,8 @@ import random
 #   Definitions
 # ------------------------------------------------------------------------------
 
-# random state for regressors
-rand_state = random.randint(0, 99)  # chosen by fair dice roll, guaranteed to be random
+# random state for testing regressors, or None for proper randomness
+rand_state = None
 
 # ------------------------------------------------------------------------------
 #   Functions
@@ -162,17 +163,29 @@ def regressor_factory():
     Create a list of regressors that can be used with a data set. This is a 'deep copy' operation
     because it duplicates the objects, rather than simply creating references to the old ones
     (doing so would result in training the same regressors over and over again).
+
+    (n.b. All regressors listed below use R^2 as their score function. Modifications to the
+    evaluate_algos function would be required to accept other regressors.)
     """
     # list of regressors to use in evaluation
     regressors = [
         KNeighborsRegressor(n_neighbors=5),
         # TODO: use a wide variety of generated K values.
+
+        RadiusNeighborsRegressor(),
         DecisionTreeRegressor(random_state=rand_state),
+
         ExtraTreesRegressor(n_estimators=100, random_state=rand_state),
+        RandomForestRegressor(n_estimators=100, random_state=rand_state),
+        AdaBoostRegressor(n_estimators=50, random_state=rand_state),
         # TODO: determine if n_estimators needs to be varied, and implement
-        MLPRegressor(hidden_layer_sizes=100, random_state=rand_state)
+
+        MLPRegressor(hidden_layer_sizes=100, random_state=rand_state),
         # TODO: flesh out options -- this neural net will need a lot of them,
         #       maybe even a loop over multiple layer sizes, learning rates, etc.
+
+        GradientBoostingRegressor(random_state=rand_state),
+        GaussianProcessRegressor(random_state=rand_state)
     ]
 
     return copy.deepcopy(regressors)
