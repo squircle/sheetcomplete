@@ -27,7 +27,6 @@ import sys
 import pandas
 import numpy
 import copy
-import random
 
 # ------------------------------------------------------------------------------
 #   Definitions
@@ -35,6 +34,9 @@ import random
 
 # random state for testing regressors, or None for proper randomness
 rand_state = None
+
+# test size for test/train split
+test_split = 0.20
 
 # ------------------------------------------------------------------------------
 #   Functions
@@ -90,7 +92,7 @@ def run_algos(x, y):
     This function is the heart of SheetComplete. TODO: complete documentation
     """
     # perform a data split
-    X_train, X_test, Y_train, Y_test = train_test_split(x, y, test_size=0.33, random_state=rand_state)
+    X_train, X_test, Y_train, Y_test = train_test_split(x, y, test_size=test_split, random_state=rand_state)
 
     # do some preliminary data processing
     X_train_num = X_train.apply(pandas.to_numeric, errors='coerce')
@@ -172,7 +174,10 @@ def regressor_factory():
         KNeighborsRegressor(n_neighbors=5),
         # TODO: use a wide variety of generated K values.
 
-        RadiusNeighborsRegressor(),
+        # RadiusNeighborsRegressor(),
+        # FIXME: RadiusNeighbors results in blank predictions:
+        # UserWarning: One or more samples have no neighbors within specified radius; predicting NaN.
+
         DecisionTreeRegressor(random_state=rand_state),
 
         ExtraTreesRegressor(n_estimators=100, random_state=rand_state),
