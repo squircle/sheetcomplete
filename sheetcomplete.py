@@ -89,7 +89,9 @@ def parse_csv():
 # Step 4: train networks
 def run_algos(x, y):
     """
-    This function is the heart of SheetComplete. TODO: complete documentation
+    This function is the heart of SheetComplete. It does the test/train split for each dataset,
+    and runs the regressors against them. It also creates a data structure to hold the instance
+    of the regressor and the test/train data (for scoring in later steps).
     """
     # perform a data split
     X_train, X_test, Y_train, Y_test = train_test_split(x, y, test_size=test_split, random_state=rand_state)
