@@ -3,7 +3,7 @@
 import math
 
 __author__ = "Noah Kruiper and Tyson Moore"
-__license__ = "TBD"
+__license__ = "GPL-3.0"
 __version__ = "1.0"
 __email__ = "nkrui088@uottawa.ca, tmoor092@uottawa.ca"
 __status__ = "Development"
