@@ -7,7 +7,7 @@ Simply provide SheetComplete with a .CSV spreadsheet (via the first argument), a
 **Important Notes:**
 
 1. Input .CSV files **must have headers**, as they are used to determine data-set orientation.
-2. **sheetcomplete only reads numerical data**, so it works a lot better if the provided data is primarily numerical.
+2. **SheetComplete only reads numerical data**, so it works a lot better if the provided data is primarily numerical.
 3. **You should not rely on this software to make important decisions**, as the quality of its predictions can vary wildly between datasets and even rows.
 4. As there are multiple classifiers, the RAM usage of **SheetComplete may exceed 2GB** with large datasets.
 
